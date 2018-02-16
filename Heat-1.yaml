@@ -1,0 +1,52 @@
+heat_template_version: 2016-04-08
+
+description: Test Plan v1.0
+
+parameters:
+  image:
+    type: string
+    label: Image name or ID
+    description: Image to be used for compute instance
+    default: bigip
+  flavor:
+    type: string
+    label: Flavor
+    description: Type of instance (flavor) to be used
+    default: m1.xlarge
+  key:
+    type: string
+    label: Key name
+    description: Name of key-pair to be used for compute instance
+    default: Bassem
+  mgmt_network:
+    type: string
+    label: Private network name or ID
+    description: Network to attach instance to.
+    default: Management
+  external_network:
+    type: string
+    label: External Network Name
+    description: External network name where floating IP resides
+    default: F5Network
+  internal_network:
+    type: string
+    label: internal Network Name
+    description: internal network name where floating IP resides
+    default: Internal_Network
+
+resources:
+  my_instance:
+    type: OS::Nova::Server
+    properties:
+      image: { get_param: image }
+      flavor: { get_param: flavor }
+      key_name: { get_param: key }
+      networks:
+        - network: { get_param: mgmt_network }
+        - network: { get_param: external_network }
+        - network: { get_param: internal_network }
+ 
+outputs:
+  instance_ip:
+    description: IP address of the instance
+    value: { get_attr: [my_instance, first_address] }
